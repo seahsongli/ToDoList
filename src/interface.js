@@ -1,4 +1,4 @@
-import { closeModal, createStorageObject } from "./logic";
+import { buttonLogic, closeModal, createStorageObject } from "./logic";
 
 const content = document.querySelector(".content");
 
@@ -47,6 +47,7 @@ function createPopUp(){
     let deleteButton = document.createElement("button");
     deleteButton.innerText = "X";
     deleteButton.classList.add("deleteButton");
+    deleteButton.setAttribute("type", "button");
 
 
     //Create an input element for title
@@ -124,6 +125,7 @@ function createPopUp(){
 
 }
 
+
 function createToDoContainer(){
     let listContents = document.querySelector(".listContents");
     let toDoContainer = document.createElement("div");
@@ -136,6 +138,7 @@ function createItem(){
     let listOfItems = [];
    
     form.addEventListener("submit", (e)=>{
+        e.preventDefault();
         let toDoContainer = document.querySelector(".toDoContainer");
         let toDoItem = document.createElement("div");
         let name = e.target["Title"].value;
@@ -146,12 +149,37 @@ function createItem(){
         let detailOfItem = createStorageObject();
         listOfItems.push(detailOfItem);
         console.log(listOfItems);
-        e.preventDefault();
+        
+        createDescription(e)
+        deleteToDoItem()
+        
     })
 
     return listOfItems;
 }
 
+function createDescription(e){
+    let toDoItem = document.querySelector(".toDoItem");
+    let descriptionButton = document.createElement("DETAILS");
+    let description = document.createElement("p");
+    description.innerText = e.target["description"].value;
+    descriptionButton.classList.add("descriptionButton");
+    descriptionButton.append(description);
+    toDoItem.append(descriptionButton);
+}
+
+
+function deleteToDoItem(){
+    let toDoItem = document.querySelector(".toDoItem");
+    let toDoContainer = document.querySelector(".toDoContainer");
+    let deleteToDoItemButton = document.createElement("button");
+    deleteToDoItemButton.innerText = "X";
+    deleteToDoItemButton.classList.add("deleteToDoItem");
+    toDoItem.append(deleteToDoItemButton);
+    deleteToDoItemButton.addEventListener("click", (e)=>{
+       e.target.parentNode.parentNode.remove();
+    })
+}
 
 
 

@@ -25,8 +25,7 @@ function submitButtonLogic(){
 
 function deleteButtonLogic(){
     let deleteButton = document.querySelector(".deleteButton");
-    deleteButton.addEventListener("click", (e)=> {
-        e.preventDefault();
+    deleteButton.addEventListener("click", ()=> {
         closeModal();
     })
 }
