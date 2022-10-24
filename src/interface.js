@@ -1,6 +1,8 @@
-import { buttonLogic, closeModal, createStorageObject } from "./logic";
+import { buttonLogic, closeModal, createStorageObject, priorityColoring } from "./logic";
 
 const content = document.querySelector(".content");
+
+let listOfItems = [];
 
 function createHeader() {
     let header = document.createElement("div");
@@ -8,6 +10,7 @@ function createHeader() {
     header.classList.add("header");
     content.append(header);
 }
+
 
 function createList(){
     let list = document.createElement("list")
@@ -18,6 +21,7 @@ function createList(){
     content.append(list);
 }
 
+
 function createButton(){
     let addButton = document.createElement("button");
     addButton.innerText = "+Add";
@@ -26,12 +30,14 @@ function createButton(){
     listContents.append(addButton);
 }
 
+
 function createOverLay(){
     let overlay = document.createElement("div");
     let listContents = document.querySelector(".listContents");
     overlay.classList.add("overlay");
     listContents.append(overlay);
 }
+
 
 function createPopUp(){
     let overlay = document.querySelector(".overlay");
@@ -48,7 +54,6 @@ function createPopUp(){
     deleteButton.innerText = "X";
     deleteButton.classList.add("deleteButton");
     deleteButton.setAttribute("type", "button");
-
 
     //Create an input element for title
     let title = document.createElement("input");
@@ -69,7 +74,6 @@ function createPopUp(){
     dueDate.setAttribute("name", "dueDate");
     dueDate.setAttribute("placeholder", "Date, e.g.22 Oct 22");
 
-
     //Create radio button for priority ranking
     let radioButtons = document.createElement("div");
     radioButtons.classList.add("radioButtons");
@@ -82,7 +86,7 @@ function createPopUp(){
     lowPriorityText.classList.add("radioButtonText");
     lowPriority.setAttribute("type", "radio");
     lowPriority.setAttribute("name", "priority");
-    lowPriority.setAttribute("label", "Low");
+    lowPriority.setAttribute("value", "Low");
     lowPriorityDiv.classList.add("radioButtonDiv");
     lowPriorityDiv.append(lowPriority,lowPriorityText);
     
@@ -121,8 +125,36 @@ function createPopUp(){
     form.append(deleteButton, title, dueDate, description,radioButtons,submitButton);
     overlay.append(form);
 
-    
+}
 
+
+function createTaskHeaders(){
+    let listContents = document.querySelector(".listContents");
+    let sidebar = document.createElement("div");
+    sidebar.classList.add("sidebar");
+
+    let overall = document.createElement("div");
+    overall.innerText = "Overall";
+    overall.classList.add("taskHeaders");
+    overall.setAttribute("id", "overall");
+
+    let lowPriority = document.createElement("div");
+    lowPriority.innerText = "Low Priority";
+    lowPriority.classList.add("taskHeaders");
+    lowPriority.setAttribute("id", "lowPriority");
+
+    let mediumPriority = document.createElement("div");
+    mediumPriority.innerText = "Medium Priority";
+    mediumPriority.classList.add("taskHeaders");
+    mediumPriority.setAttribute("id", "mediumPriority");
+
+    let highPriority = document.createElement("div");
+    highPriority.innerText = "High Priority";
+    highPriority.classList.add("taskHeaders");
+    highPriority.setAttribute("id", "highPriority");
+
+    sidebar.append(overall, lowPriority, mediumPriority, highPriority);
+    listContents.append(sidebar);
 }
 
 
@@ -133,54 +165,78 @@ function createToDoContainer(){
     listContents.append(toDoContainer);
 }
 
+
 function createItem(){
-    let form = document.querySelector(".form")
-    let listOfItems = [];
-   
+    let form = document.querySelector(".form");
+
     form.addEventListener("submit", (e)=>{
         e.preventDefault();
         let toDoContainer = document.querySelector(".toDoContainer");
+
         let toDoItem = document.createElement("div");
+        toDoItem.classList.add("toDoItem");
+        toDoItem.style.display = "flex";
+
+        toDoContainer.append(toDoItem);
+
+        let itemContents = document.createElement("div");
+        itemContents.classList.add("itemContents");
+        toDoItem.append(itemContents);
+
         let name = e.target["Title"].value;
         let duedate = e.target["dueDate"].value;
-        toDoItem.append(name,duedate);
-        toDoItem.classList.add("toDoItem");
-        toDoContainer.append(toDoItem);
+        
         let detailOfItem = createStorageObject();
         listOfItems.push(detailOfItem);
         console.log(listOfItems);
         
-        createDescription(e)
-        deleteToDoItem()
-        
+        createItemDetails(itemContents,name,duedate);
+        createDescription(e, itemContents);
+        deleteToDoItem();
+        priorityColoring(listOfItems);
     })
 
     return listOfItems;
 }
 
-function createDescription(e){
-    let toDoItem = document.querySelector(".toDoItem");
+
+function createItemDetails(itemContents, name , dueDate){
+    let title = document.createElement("div");
+    title.innerText = name;
+    title.classList.add("title");
+
+    let deadline = document.createElement("div");
+    deadline.classList.add("dueDate");
+    deadline.innerText = dueDate;
+
+    itemContents.append(title,deadline);
+}
+
+
+function createDescription(e, itemContents){
+    let toDoItem = Array.from(document.querySelectorAll(".toDoItem"));
     let descriptionButton = document.createElement("DETAILS");
     let description = document.createElement("p");
     description.innerText = e.target["description"].value;
     descriptionButton.classList.add("descriptionButton");
     descriptionButton.append(description);
-    toDoItem.append(descriptionButton);
+    itemContents.append(descriptionButton);
 }
 
 
 function deleteToDoItem(){
-    let toDoItem = document.querySelector(".toDoItem");
+    let toDoItem = Array.from(document.querySelectorAll(".toDoItem"));
     let toDoContainer = document.querySelector(".toDoContainer");
     let deleteToDoItemButton = document.createElement("button");
     deleteToDoItemButton.innerText = "X";
     deleteToDoItemButton.classList.add("deleteToDoItem");
-    toDoItem.append(deleteToDoItemButton);
+    toDoItem.pop().append(deleteToDoItemButton);
     deleteToDoItemButton.addEventListener("click", (e)=>{
-       e.target.parentNode.parentNode.remove();
+       e.target.parentNode.remove();
     })
 }
 
 
 
-export{createHeader, createList, createButton, createOverLay, createPopUp, createToDoContainer,createItem};
+
+export{createHeader, createList, createButton, createOverLay, createPopUp, createTaskHeaders, createToDoContainer,createItem};
