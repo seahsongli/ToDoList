@@ -1,4 +1,4 @@
-import { createItem } from "./interface";
+import { createItem,createItemDetails, deleteToDoItem} from "./interface";
 
 function buttonLogic(){
     let addButton = document.querySelector(".addButton");
@@ -32,12 +32,14 @@ function deleteButtonLogic(){
     let deleteButton = document.querySelector(".deleteButton");
     deleteButton.addEventListener("click", ()=> {
         closeModal();
+
     })
 }
 
 
-function createStorageObject(){
-    let form = document.querySelector(".form")
+function createStorageObject(toDoItem){
+    let form = document.querySelector(".form");
+    let object = {};
     let details = {};
     let radioButtons = Array.from(document.querySelectorAll('input[name="priority"]'))
     details.name = form["Title"].value;
@@ -48,6 +50,7 @@ function createStorageObject(){
             details.priority = radioButton.value;
         }
     }
+    object[toDoItem] = details;
     return details;
 }
 
@@ -134,7 +137,73 @@ function switchTabLogic(){
     }
 }
 
+function getDate(){
+    let listOfDates = Array.from(document.querySelectorAll(".dueDate"));
+    let dueDates = [];
+    for(let i=0;i<listOfDates.length;i++){
+        dueDates.push(listOfDates[i].innerText);
+    }
+    console.log(dueDates);
+    return dueDates;
+}
 
-export{buttonLogic, openModal, closeModal,submitButtonLogic, deleteButtonLogic, createStorageObject, priorityColoring, switchTabLogic};
 
+function setStorage(name, detailOfItem){
+    let detailOfItem_serialized = JSON.stringify(detailOfItem);
+    localStorage.setItem(name, detailOfItem_serialized);
+    console.log(localStorage);
+}
+
+
+function createStorageItems(name){
+    let detailOfItem_deserialized = JSON.parse(localStorage.getItem(name));
+    let toDoContainer = document.querySelector(".toDoContainer");
+
+    let toDoItem = document.createElement("div");
+    toDoItem.classList.add("toDoItem");
+    toDoItem.style.display = "flex";
+
+    toDoContainer.append(toDoItem);
+
+    let itemContents = document.createElement("div");
+    itemContents.classList.add("itemContents");
+    toDoItem.append(itemContents);
+
+    let title = detailOfItem_deserialized["name"];
+    let duedate =  detailOfItem_deserialized["dueDate"];
+    createItemDetails(itemContents,title,duedate);
+
+    let descriptionButton = document.createElement("DETAILS");
+    let description = document.createElement("p");
+    description.innerText = detailOfItem_deserialized["description"];
+    descriptionButton.classList.add("descriptionButton");
+    descriptionButton.append(description);
+    itemContents.append(descriptionButton);
+        
+    
+    deleteToDoItem();
+    let listOfStorageObject = []
+    for(let j=0;j<localStorage.length;j++){
+        listOfStorageObject.push(JSON.parse(localStorage[localStorage.key(j)]));
+    }
+
+    priorityColoring(listOfStorageObject);
+    
+       
+}
+
+function populateStorage(){
+    if (localStorage.length>0){
+        for (var i=0; i < localStorage.length; i++){
+            createStorageItems(localStorage.key(i));
+        }
+    }
+    return;
+}
+
+
+
+
+
+export{buttonLogic, openModal, closeModal,submitButtonLogic, deleteButtonLogic, createStorageObject, priorityColoring, switchTabLogic, getDate, setStorage,createStorageItems, populateStorage}
 

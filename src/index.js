@@ -1,6 +1,6 @@
 import {createHeader, createList, createButton, createOverLay, createPopUp, createToDoContainer, createItem, createDescription, createTaskHeaders} from "./interface";
 import  "../src/styles/header.css";
-import {buttonLogic, openModal, closeModal,submitButtonLogic, deleteButtonLogic, priorityColoring, switchTabLogic} from "./logic";
+import {buttonLogic, openModal, closeModal,submitButtonLogic, deleteButtonLogic, priorityColoring, switchTabLogic, populateStorage, createStorageItems} from "./logic";
 
 
 
@@ -18,6 +18,12 @@ createItem();
 submitButtonLogic();
 deleteButtonLogic();
 switchTabLogic();
+populateStorage();
+
+// for(let name in localStorage) {
+//     populateStorage(name);
+// }
+
 
 
 // To Do List

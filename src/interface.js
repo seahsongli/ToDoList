@@ -1,4 +1,5 @@
-import { buttonLogic, closeModal, createStorageObject, priorityColoring } from "./logic";
+import { buttonLogic, closeModal, createStorageObject, priorityColoring,getDate,setStorage} from "./logic";
+import {format} from 'date-fns';
 
 const content = document.querySelector(".content");
 
@@ -72,7 +73,7 @@ function createPopUp(){
     let dueDate = document.createElement("input");
     dueDate.setAttribute("type", "text");
     dueDate.setAttribute("name", "dueDate");
-    dueDate.setAttribute("placeholder", "Date, e.g.22 Oct 22");
+    dueDate.setAttribute("placeholder", "Date, DD/MM/YYYY");
 
     //Create radio button for priority ranking
     let radioButtons = document.createElement("div");
@@ -186,7 +187,8 @@ function createItem(){
         let name = e.target["Title"].value;
         let duedate = e.target["dueDate"].value;
         
-        let detailOfItem = createStorageObject();
+        
+        let detailOfItem = createStorageObject(toDoItem);
         listOfItems.push(detailOfItem);
         console.log(listOfItems);
         
@@ -194,8 +196,10 @@ function createItem(){
         createDescription(e, itemContents);
         deleteToDoItem();
         priorityColoring(listOfItems);
+        setStorage(name, detailOfItem);
+       
     })
-
+   
     return listOfItems;
 }
 
@@ -232,11 +236,14 @@ function deleteToDoItem(){
     deleteToDoItemButton.classList.add("deleteToDoItem");
     toDoItem.pop().append(deleteToDoItemButton);
     deleteToDoItemButton.addEventListener("click", (e)=>{
+       localStorage.removeItem(localStorage.key(e.target.previousSibling.firstChild.innerText));
        e.target.parentNode.remove();
+       
     })
 }
 
 
 
 
-export{createHeader, createList, createButton, createOverLay, createPopUp, createTaskHeaders, createToDoContainer,createItem};
+
+export{createHeader, createList, createButton, createOverLay, createPopUp, createTaskHeaders, createToDoContainer,createItem, createItemDetails, deleteToDoItem};
